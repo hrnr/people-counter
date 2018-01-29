@@ -36,7 +36,6 @@ class LucasKanadeTracker:
 
     def update(self, image):
         frame_gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-        vis = image.copy()
 
         if len(self.tracks) > 0:
             img0, img1 = self.prev_gray, frame_gray
@@ -53,13 +52,10 @@ class LucasKanadeTracker:
                 if len(tr) > self.track_len:
                     del tr[0]
                 new_tracks.append(tr)
-                cv.circle(vis, (x, y), 2, (0, 255, 0), -1)
+
             self.tracks = new_tracks
-            cv.polylines(vis, [np.int32(tr) for tr in self.tracks], False, (0, 255, 0))
-            draw_str(vis, (20, 20), 'track count: %d' % len(self.tracks))
 
         self.prev_gray = frame_gray
-        cv.imshow('lk_track', vis)
 
     def detect(self, image):
         frame_gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
@@ -71,6 +67,12 @@ class LucasKanadeTracker:
         if p is not None:
             for x, y in np.float32(p).reshape(-1, 2):
                 self.tracks.append([(x, y)])
+
+    def visualise(self, frame):
+        for track in self.tracks:
+            cv.circle(frame, track[-1], 2, (0, 255, 0), -1)
+        cv.polylines(frame, [np.int32(tr) for tr in self.tracks], False, (0, 255, 0))
+        draw_str(frame, (20, 20), 'track count: %d' % len(self.tracks))
 
 def main():
     import sys
@@ -87,6 +89,9 @@ def main():
         if not ret:
             break
         tracker.update(frame)
+        tracker.detect(frame)
+        tracker.visualise(frame)
+        cv.imshow('lk_track', frame)
         if cv.waitKey(1) >= 0:
             break
     cam.release()

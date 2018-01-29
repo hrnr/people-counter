@@ -57,8 +57,6 @@ class PeopleDetector:
             if class_id < len(classNames) and classNames[class_id] == 'person':
                 self.people.append(roi)
 
-        # self.visualise(frame)
-
     def visualise(self, frame):
         for roi in self.people:
             cv.rectangle(frame, roi.tl(), roi.br(), (0, 255, 0))

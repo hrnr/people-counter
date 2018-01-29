@@ -7,6 +7,7 @@ from future.builtins.disabled import *
 
 import argparse
 import random
+import time
 from collections import namedtuple
 
 import numpy as np
@@ -61,8 +62,8 @@ RectStamped = namedtuple('RectStamped', ['roi', 'stamp'])
 class PeopleCounter:
     def __init__(self, args):
         self.min_tracks_for_match = 7
-        self.detect_interval = 5
-        self.finish_tracking_after = 18
+        self.detect_interval = 8
+        self.finish_tracking_after = self.detect_interval + 3
         self.min_track_length = 4
 
         self.detector = PeopleDetector(args.proto, args.model, args.confidence)
@@ -70,7 +71,7 @@ class PeopleCounter:
         self.people = []
         self.count_passed = 0
         self.frame_idx = 0
-        self.vis = None
+        self.total_time = 1
         if args.video:
             self.cap = cv.VideoCapture(args.video)
         else:
@@ -83,6 +84,9 @@ class PeopleCounter:
                 break
             self.vis = frame.copy()
 
+            # measure time
+            start = time.clock()
+
             # optical flow update - fast
             self.tracker.update(frame)
 
@@ -94,10 +98,15 @@ class PeopleCounter:
                 # count people
                 self.count()
 
-                self.visualise()
+                self.tracker.visualise(frame)
+                self.visualise(frame)
+            # measure time
+            stop = time.clock()
+            self.total_time += stop - start
+            self.frame_idx += 1
+            # wait for visualisation
             if cv.waitKey(1) == 27:
                 break
-            self.frame_idx += 1
 
         self.cap.release()
         cv.destroyAllWindows()
@@ -131,11 +140,11 @@ class PeopleCounter:
                 # we matched an old person
                 # add to detecction to person's track
                 self.people[max_ind].append(RectStamped(new_person, self.frame_idx))
-                print('old match: ', matched_tracks)
+                # print('old match: ', matched_tracks)
             else:
                 # we haven't found a matching person, lets add new one
                 self.people.append([RectStamped(new_person, self.frame_idx)])
-                print('new_person', new_person)
+                # print('new_person', new_person)
                 # self.visualise()
                 # if cv.waitKey(-1):
                 #     pass
@@ -153,14 +162,15 @@ class PeopleCounter:
             # increase counters
             self.count_passed += 1
 
-    def visualise(self):
-        draw_str(self.vis, (20, 20), 'passed people: %d' % self.count_passed)
+    def visualise(self, frame):
+        draw_str(frame, (20, 40), 'passed people: %d' % self.count_passed)
+        draw_str(frame, (20, 60), 'fps: %d' % (self.frame_idx / self.total_time))
         for track in self.people:
             color = randColor(hash(track[0]))
             for roi, _ in track:
-                cv.rectangle(self.vis, roi.tl(), roi.br(), color)
+                cv.rectangle(frame, roi.tl(), roi.br(), color)
 
-        cv.imshow("counter", self.vis)
+        cv.imshow("counter", frame)
 
 if __name__ == "__main__":
     main()
