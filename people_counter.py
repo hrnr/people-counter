@@ -15,26 +15,7 @@ import cv2 as cv
 
 from people_detect import PeopleDetector
 from lucas_kanade import LucasKanadeTracker
-from common import draw_str
-
-def nearBorder(rect, rows, cols, border_width):
-    border_rect = rect.tl()[0] < border_width or rect.tl()[0] < border_width
-    border_rect |= rect.br()[0] > rows + border_width or rect.br()[1] > border_width + cols
-    return border_rect
-
-color_palette = [
-    (0,0,0),
-    (230,159,0),
-    (86,180,223),
-    (0,158,115),
-    (240,228,66),
-    (0,114,178),
-    (213,94,0),
-    (204,121,167),
-]
-# pick random color based on n
-def randColor(n):
-    return color_palette[n % len(color_palette)]
+from common import draw_str, randColor
 
 def matchRoisFromFlow(old_roi, new_roi, tracks, step):
     matched_tracks = 0
@@ -53,6 +34,10 @@ def main():
     parser.add_argument("--proto", default="MobileNetSSD_deploy.prototxt", help='Path to text network file: MobileNetSSD_deploy.prototxt')
     parser.add_argument("--model", default="MobileNetSSD_deploy.caffemodel", help='Path to weights: MobileNetSSD_deploy.caffemodel')
     parser.add_argument("--confidence", default=0.6, type=float, help="confidence threshold to filter out weak detections")
+    parser.add_argument("--min_tracks_for_match", default=7, type=int, help="minimum number of points that must match between detection to be considered one track")
+    parser.add_argument("--min_track_length", default=4, type=int, help="minimum number of detections in one track to count one person")
+    parser.add_argument("--detect_interval", default=8, type=int,
+        help="each detect_interval frames people detection and corner detection runs. In between people are tracked only using Lucas-Kanade method.")
     args = parser.parse_args()
 
     PeopleCounter(args).run()
@@ -61,13 +46,13 @@ RectStamped = namedtuple('RectStamped', ['roi', 'stamp'])
 
 class PeopleCounter:
     def __init__(self, args):
-        self.min_tracks_for_match = 7
-        self.detect_interval = 8
+        self.min_tracks_for_match = args.min_tracks_for_match
+        self.detect_interval = args.detect_interval
         self.finish_tracking_after = self.detect_interval + 3
-        self.min_track_length = 4
+        self.min_track_length = args.min_track_length
 
         self.detector = PeopleDetector(args.proto, args.model, args.confidence)
-        self.tracker = LucasKanadeTracker(50)
+        self.tracker = LucasKanadeTracker(3 * self.detect_interval)
         self.people = []
         self.count_passed = 0
         self.frame_idx = 0
@@ -107,7 +92,10 @@ class PeopleCounter:
             # wait for visualisation
             if cv.waitKey(1) == 27:
                 break
-
+        # count also people currently in the frame
+        self.frame_idx += self.finish_tracking_after * 2
+        self._count_finished_tracks()
+        # cleanup windows
         self.cap.release()
         cv.destroyAllWindows()
         print('passed people: ', self.count_passed)
@@ -119,10 +107,6 @@ class PeopleCounter:
     def _add_new_people(self):
         # find if we have new person in the image
         for new_person in self.detector.people:
-            # ignore detections that are close to border, since there we might not be
-            # to track people reliably (depends on camera setup)
-            # if nearBorder(new_person, self.vis.shape[0], self.vis.shape[1], self.border_width):
-            #     continue
             # try to match detected persons to the new ones
             matches = np.zeros(len(self.people))
             for i,person_track in enumerate(self.people):

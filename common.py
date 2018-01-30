@@ -10,6 +10,20 @@ def draw_str(dst, target, s):
     cv.putText(dst, s, (x+1, y+1), cv.FONT_HERSHEY_PLAIN, 1.0, (0, 0, 0), thickness = 2, lineType=cv.LINE_AA)
     cv.putText(dst, s, (x, y), cv.FONT_HERSHEY_PLAIN, 1.0, (255, 255, 255), lineType=cv.LINE_AA)
 
+color_palette = [
+    (0,0,0),
+    (230,159,0),
+    (86,180,223),
+    (0,158,115),
+    (240,228,66),
+    (0,114,178),
+    (213,94,0),
+    (204,121,167),
+]
+# pick random color based on n
+def randColor(n):
+    return color_palette[n % len(color_palette)]
+
 # 2d rectangle
 class Rect:
     x = 0

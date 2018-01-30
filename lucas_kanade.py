@@ -32,7 +32,7 @@ class LucasKanadeTracker:
         self.tracks = []
         self.lk_params = dict(winSize = (15, 15), maxLevel = 2,
                               criteria = (cv.TERM_CRITERIA_EPS | cv.TERM_CRITERIA_COUNT, 10, 0.03))
-        self.feature_params = dict(maxCorners = 1000, qualityLevel = 0.1, minDistance = 7, blockSize = 7)
+        self.feature_params = dict(maxCorners = 600, qualityLevel = 0.1, minDistance = 7, blockSize = 7)
 
     def update(self, image):
         frame_gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
