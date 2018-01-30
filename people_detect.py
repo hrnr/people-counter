@@ -27,9 +27,11 @@ class PeopleDetector:
         self.net = cv.dnn.readNetFromCaffe(proto, model)
         self.confidence = confidence
         self.people = []
+        self.other_objects = []
 
     def update(self, image):
         self.people = []
+        self.other_objects = []
         frame = image.copy()
 
         # normalize the image for the network input
@@ -42,10 +44,12 @@ class PeopleDetector:
 
         for i in range(detections.shape[2]):
             confidence = detections[0, 0, i, 2]
+            class_id = int(detections[0, 0, i, 1])
             if confidence < self.confidence:
                 continue
-
-            class_id = int(detections[0, 0, i, 1])
+            if class_id >= len(classNames):
+                # unknown object
+                continue
 
             xLeftBottom = int(detections[0, 0, i, 3] * cols)
             yLeftBottom = int(detections[0, 0, i, 4] * rows)
@@ -54,8 +58,11 @@ class PeopleDetector:
 
             roi = Rect((xLeftBottom, yLeftBottom), (xRightTop, yRightTop))
 
-            if class_id < len(classNames) and classNames[class_id] == 'person':
+
+            if classNames[class_id] == 'person':
                 self.people.append(roi)
+            else:
+                self.other_objects.append(classNames[class_id])
 
     def visualise(self, frame):
         for roi in self.people:

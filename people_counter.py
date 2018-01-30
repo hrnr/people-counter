@@ -149,6 +149,8 @@ class PeopleCounter:
     def visualise(self, frame):
         draw_str(frame, (20, 40), 'passed people: %d' % self.count_passed)
         draw_str(frame, (20, 60), 'fps: %d' % (self.frame_idx / self.total_time))
+        if self.detector.other_objects:
+            draw_str(frame, (20, 80), 'other objects: %s' % ', '.join(self.detector.other_objects))
         for track in self.people:
             color = randColor(hash(track[0]))
             for roi, _ in track:
