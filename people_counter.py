@@ -31,8 +31,8 @@ def matchRoisFromFlow(old_roi, new_roi, tracks, step):
 def main():
     parser = argparse.ArgumentParser(description='Counting people in videos')
     parser.add_argument("--video", help="path to video file. If empty, camera's stream will be used")
-    parser.add_argument("--proto", default="MobileNetSSD_deploy.prototxt", help='Path to text network file: MobileNetSSD_deploy.prototxt')
-    parser.add_argument("--model", default="MobileNetSSD_deploy.caffemodel", help='Path to weights: MobileNetSSD_deploy.caffemodel')
+    parser.add_argument("--proto", default="data/MobileNetSSD_deploy.prototxt", help='Path to text network file: MobileNetSSD_deploy.prototxt')
+    parser.add_argument("--model", default="data/MobileNetSSD_deploy.caffemodel", help='Path to weights: MobileNetSSD_deploy.caffemodel')
     parser.add_argument("--confidence", default=0.6, type=float, help="confidence threshold to filter out weak detections")
     parser.add_argument("--min_tracks_for_match", default=7, type=int, help="minimum number of points that must match between detection to be considered one track")
     parser.add_argument("--min_track_length", default=4, type=int, help="minimum number of detections in one track to count one person")

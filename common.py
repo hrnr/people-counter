@@ -2,7 +2,6 @@
 Common utilities used though this project
 '''
 
-import numpy as np
 import cv2 as cv
 
 def draw_str(dst, target, s):
