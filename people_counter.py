@@ -48,11 +48,11 @@ class PeopleCounter:
     def __init__(self, args):
         self.min_tracks_for_match = args.min_tracks_for_match
         self.detect_interval = args.detect_interval
-        self.finish_tracking_after = self.detect_interval + 3
+        self.finish_tracking_after = self.detect_interval * 3
         self.min_track_length = args.min_track_length
 
         self.detector = PeopleDetector(args.proto, args.model, args.confidence)
-        self.tracker = LucasKanadeTracker(3 * self.detect_interval)
+        self.tracker = LucasKanadeTracker(4 * self.detect_interval)
         self.people = []
         self.count_passed = 0
         self.frame_idx = 0
@@ -112,7 +112,7 @@ class PeopleCounter:
             for i,person_track in enumerate(self.people):
                 # count tracks that match
                 matches[i] = matchRoisFromFlow(person_track[-1].roi, new_person,
-                    self.tracker.tracks, self.detect_interval)
+                    self.tracker.tracks, self.frame_idx - person_track[-1].stamp)
             if self.people:
                 # choose person with maximum matches
                 max_ind = np.argmax(matches)
@@ -129,7 +129,7 @@ class PeopleCounter:
                 # we haven't found a matching person, lets add new one
                 self.people.append([RectStamped(new_person, self.frame_idx)])
                 # print('new_person', new_person)
-                # self.visualise()
+                # self.visualise(self.vis)
                 # if cv.waitKey(-1):
                 #     pass
 
