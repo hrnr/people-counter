@@ -83,15 +83,22 @@ class PeopleCounter:
                 # count people
                 self.count()
 
-                self.tracker.visualise(frame)
-                self.visualise(frame)
             # measure time
             stop = time.clock()
             self.total_time += stop - start
-            self.frame_idx += 1
+
+            self.tracker.visualise(frame)
+            self.visualise(frame)
             # wait for visualisation
-            if cv.waitKey(1) == 27:
+            c = cv.waitKey(200)
+            if c == 27: # esc press
                 break
+            elif c == 115: # s press
+                # save visualialised image on s press
+                cv.imwrite('vis-%s.png' % self.frame_idx, frame)
+
+            self.frame_idx += 1
+
         # count also people currently in the frame
         self.frame_idx += self.finish_tracking_after * 2
         self._count_finished_tracks()
