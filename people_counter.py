@@ -117,7 +117,7 @@ class PeopleCounter:
             self.tracker.visualise(frame)
             self.visualise(frame)
             # wait for visualisation
-            c = cv.waitKey(200)
+            c = cv.waitKey(1)
             if c == 27: # esc press
                 break
             elif c == 115: # s press
