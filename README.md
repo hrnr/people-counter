@@ -62,7 +62,7 @@ Other parameters are optional, they are explained thoroughly in the paper.
 Datasets
 --------
 
-`data` folder with video used for experiments and required files for neural network is available at
+`data` folder with video used for experiments and required files for neural network is available at https://1drv.ms/u/s!Asq_3FI_n-vzjA-1AtArIz9rct0y
 
 Extract the `data` folder from the archive alongside `people_counter.py` and you should be able to run examples below. Visualisation should start automatically.
 
@@ -76,7 +76,7 @@ The examples expects a unix system with `/` as directory separator, adjust it ac
 ```
 
 ```
-./people_counter.py --video data/mv2_001.avi --detect_interval=15
+./people_counter.py --video data/mv2_001.mkv --detect_interval=15
 ./people_counter.py --video data/Venice-1.mp4 --detect_interval=15
 ```
 
