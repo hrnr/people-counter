@@ -8,6 +8,12 @@ Dependencies
 
 The main dependency of the project is OpenCV. You need a recent version of OpenCV, at least 3.4.0 or latest master. OpenCV needs to be compiled with dnn module (enabled by default) since that is what we use for running neural network.
 
+The project has been tested with `opencv-python` package version 3.4.0.12 available from PyPi via pip at https://pypi.python.org/pypi/opencv-python It should be enough to run
+
+```
+sudo pip install opencv-python
+```
+
 Another dependency is numpy, but that is required anyway for OpenCV bindings.
 
 The project should support both Python 2 and 3, but it was tested only with Python 2.7.14.
@@ -64,13 +70,19 @@ The examples expects a unix system with `/` as directory separator, adjust it ac
 
 ```
 ./people_counter.py --video data/P1E_S1_C1.mkv
+./people_counter.py --video data/P1L_S3_C2.mkv
+./people_counter.py --video data/P2E_S2_C2.2.mkv
+./people_counter.py --video data/P2E_S5_C2.1.mkv
 ```
 
 ```
 ./people_counter.py --video data/mv2_001.avi --detect_interval=15
+./people_counter.py --video data/Venice-1.mp4 --detect_interval=15
 ```
 
 ```
 ./people_counter.py --video data/TUD-Campus.mp4 --detect_interval=2
 ./people_counter.py --video data/TUD-Crossing.mp4 --detect_interval=2
 ```
+
+When video stream ends the script outputs total people passed in video to stdout.
