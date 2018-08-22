@@ -1,7 +1,7 @@
 People counter
 ==============
 
-Count people passing in videos.
+Count people passing in videos. This demo uses OpenCV deep neural networks module together with optical flow to track people in images. Find more in the [technical report](https://1drv.ms/b/s!Asq_3FI_n-vzjBEKaKWhpGi50TzJ).
 
 ![screenshot from the tracker](screenshot.png)
 
