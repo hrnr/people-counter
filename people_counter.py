@@ -1,13 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Counts people in videos
 """
-
-# python 3 compatibility
-from __future__ import absolute_import, division, print_function
-from builtins import *
-from future.builtins.disabled import *
 
 import argparse
 import random

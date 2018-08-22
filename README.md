@@ -8,15 +8,15 @@ Dependencies
 
 The main dependency of the project is OpenCV. You need a recent version of OpenCV, at least 3.4.0 or latest master. OpenCV needs to be compiled with dnn module (enabled by default) since that is what we use for running neural network.
 
-The project has been tested with `opencv-python` package version 3.4.0.12 available from PyPi via pip at https://pypi.python.org/pypi/opencv-python It should be enough to run
+The project has been tested with `opencv-python` package version 3.4.0.12 and later available from PyPi via pip at https://pypi.python.org/pypi/opencv-python It should be enough to run
 
 ```
-sudo pip install opencv-python
+sudo pip3 install opencv-python
 ```
 
 Another dependency is numpy, but that is required anyway for OpenCV bindings.
 
-The project should support both Python 2 and 3, but it was tested only with Python 2.7.14.
+The project supports only Python 3.
 
 Running
 -------
