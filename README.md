@@ -3,6 +3,8 @@ People counter
 
 Count people passing in videos.
 
+![screenshot from the tracker](screenshot.png)
+
 Dependencies
 ------------
 
